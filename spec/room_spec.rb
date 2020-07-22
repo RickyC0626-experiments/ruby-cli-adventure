@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../room'
 
 RSpec.describe Room do
@@ -38,20 +40,32 @@ RSpec.describe Room do
     let(:room) { Room.new('Kitchen', 'A messy bachelor must live here.') }
 
     context 'the Room has neighbors' do
+      before do
+        room.map = double
+        north = Room.new('North Room', 'It is cold')
+        south = Room.new('South Room', 'It is hot')
+        allow(room.map).to receive(:neighbors).and_return([{ north: north }, { south: south }])
+      end
+
       it 'returns a Hash' do
         expect(room.neighbors).to be_an_instance_of(Hash)
       end
 
       it 'returns a Hash with Symbols as keys' do
-        expect(room.neighbors.first.key).to be_an_instance_of(Symbol)
+        expect(room.neighbors.keys.first).to be_an_instance_of(Symbol)
       end
 
       it 'returns a Hash with Rooms as values' do
-        expect(room.neighbors.first.value).to be_an_instance_of(Room)
+        expect(room.neighbors.values.first).to be_an_instance_of(Room)
       end
     end
 
-    context 'the room has no neighbors' do
+    context 'the Room has no neighbors' do
+      before do
+        room.map = double
+        allow(room.map).to receive(:neighbors).and_return([])
+      end
+
       it 'returns a Hash' do
         expect(room.neighbors).to be_an_instance_of(Hash)
       end
